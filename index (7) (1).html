@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Texto Compartido</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    textarea {
+      width: 80%;
+      height: 60vh;
+      font-size: 14px;
+      padding: 15px;
+      background: #111;
+      color: #fff;
+      border: 1px solid #555;
+      resize: none;
+      outline: none;
+      font-family: Arial, Sans-Serif;
+    }
+  </style>
+</head>
+<body>
+  <textarea id="liveInput" placeholder="Escribe aquí..."></textarea>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB3Bi1CajeMeJHUWWWq-vmdeI0tfkJ6JKY",
+      authDomain: "texto-libre.firebaseapp.com",
+      databaseURL: "https://texto-libre-default-rtdb.firebaseio.com",
+      projectId: "texto-libre",
+      storageBucket: "texto-libre.firebasestorage.app",
+      messagingSenderId: "863590971296",
+      appId: "1:863590971296:web:295c6aa5f5ea18381156c5",
+      measurementId: "G-SGSZTJ133W"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
+    const inputRef = ref(db, "liveInput");
+    const textarea = document.getElementById("liveInput");
+
+    onValue(inputRef, (snapshot) => {
+      const val = snapshot.val();
+      if (val !== null && textarea.value !== val) {
+        textarea.value = val;
+      }
+    });
+
+    textarea.addEventListener("input", () => {
+      set(inputRef, textarea.value);
+    });
+  </script>
+</body>
+</html>
